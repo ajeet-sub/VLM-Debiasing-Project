@@ -113,7 +113,7 @@ Restart the terminal
 ## Data download to remote server
 inside your scratch folder:
 - `mkdir -p e-daic`
-- `wget -r -np -nH --cut-dirs=1 -P ./e-daic http://example.com/path/to/files/`
+- `wget -r -np -nH --cut-dirs=1 -P ./data/e-daic/original http://example.com/path/to/files/`
 
 ## To untar the e-daic dataset
-run `python ./scripts/untar_data.py --root-dir scratch/vlm-debiasing/e-daic_orig_data --dest-dir scratch/vlm-debiasing/e-daic_untar_data` but change destination and root directories
+run `python ./scripts/untar_data.py --root-dir scratch/vlm-debiasing/data/e-daic/original --dest-dir scratch/vlm-debiasing/data/e-daic/untarred` but change destination and root directories
