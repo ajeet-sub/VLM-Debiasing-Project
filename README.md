@@ -108,6 +108,7 @@ Restart the terminal
                 ```
     - Pandas `conda install pandas`
     - tqdm `pip install tqdm`
+    - matplotlib `conda install matplotlib`
 
 ## Data download to remote server
 inside your scratch folder:
