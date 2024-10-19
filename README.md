@@ -19,6 +19,11 @@ Open oddjobs interactive session:
 
 https://docs.rc.fas.harvard.edu/kb/convenient-slurm-commands/
 
+### Github
+ install Git pull extensions
+ clone repo to a local folder
+ configure ur username and passwor:
+    git config user.name "Your Name"
 
 ## Installations
 install conda:
