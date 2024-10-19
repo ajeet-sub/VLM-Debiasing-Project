@@ -45,6 +45,8 @@ rm miniconda3/miniconda.sh
 miniconda3/bin/conda init bash
 ```
 Restart the terminal
+
+### Packages Installation
 -------------------------------------------------------------------
 
 1. create conda environment --> 
@@ -105,4 +107,9 @@ Restart the terminal
                     print("Running locally (not on a SLURM-managed cluster).")
                 ```
     - Pandas `conda install pandas`
-    - tqdm `pip install tqdm`       
+    - tqdm `pip install tqdm`
+
+## Data download to remote server
+inside your scratch folder:
+- `mkdir -p e-daic`
+- `wget -r -np -nH --cut-dirs=1 -P ./e-daic http://example.com/path/to/files/`
