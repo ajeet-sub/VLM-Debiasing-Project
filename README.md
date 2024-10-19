@@ -104,3 +104,5 @@ Restart the terminal
                 else:
                     print("Running locally (not on a SLURM-managed cluster).")
                 ```
+    - Pandas `conda install pandas`
+    - tqdm `pip install tqdm`       
