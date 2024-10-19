@@ -6,8 +6,8 @@ from terminal or using remote ssh extension on vscode:
 
 Inside home/your_folder
 Open oddjobs interactive session: 
-    run sinfo first to check which node is available and replace hugenod4
-    srun -G 1 -w atl1-1-01-002-3-0 -t 0-07:00:00 -c 14 -n 1 --mem 60G --pty bash -i
+1. run sinfo first to check which node is available and replace hugenod4
+2. srun -G 1 -w atl1-1-01-002-3-0 -t 0-07:00:00 -c 14 -n 1 --mem 60G --pty bash -i
 
     -G 1: number of GPUs to allocate
     -w hugenode4: particular node where the job will run # Q? does it always need to be hugenode4??
@@ -20,20 +20,23 @@ Open oddjobs interactive session:
 https://docs.rc.fas.harvard.edu/kb/convenient-slurm-commands/
 
 ### Github
- install Git pull extensions
- clone repo to a local folder
- configure ur username and passwor:
+1. install Git pull extensions
+2. clone repo to a local folder
+3. configure ur username and email:
     git config user.name "Your Name"
+    git config user.email "email"
 
 ## Installations
-install conda:
-    mkdir -p miniconda3
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda3/miniconda.sh
-    bash miniconda3/miniconda.sh -b -u -p miniconda3
-    rm miniconda3/miniconda.sh
-
-    miniconda3/bin/conda init bash
-
+### conda
+inside **scratch folder**:
+```
+mkdir -p miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda3/miniconda.sh
+bash miniconda3/miniconda.sh -b -u -p miniconda3
+rm miniconda3/miniconda.sh
+miniconda3/bin/conda init bash
+```
+-------------------------------------------------------------------
 
 create conda environment --> conda create --name 
 within conda environment
