@@ -6,8 +6,8 @@ from terminal or using remote ssh extension on vscode:
 
 Inside home/your_folder
 Open oddjobs interactive session: 
-1. run sinfo first to check which node is available and replace hugenod4
-2. srun -G 1 -w atl1-1-01-002-3-0 -t 0-07:00:00 -c 14 -n 1 --mem 60G --pty bash -i
+1. run `sinfo` first to check which node is available and replace hugenod4
+2. `srun -G 1 -w hugenod4 -t 0-07:00:00 -c 14 -n 1 --mem 60G --pty bash -i`
 ```
     -G 1: number of GPUs to allocate
     -w hugenode4: particular node where the job will run # Q? does it always need to be hugenode4??
