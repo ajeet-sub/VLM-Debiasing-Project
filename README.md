@@ -6,8 +6,8 @@ from terminal or using remote ssh extension on vscode:
 
 Inside home/your_folder
 Open oddjobs interactive session: 
-1. run `sinfo` first to check which node is available and replace hugenod4
-2. `srun -G 1 -w hugenod4 -t 0-07:00:00 -c 14 -n 1 --mem 60G --pty bash -i`
+1. run `sinfo` first to check which node is available and replace atl1-1-01-002-5-0
+2. `srun -G 1 -w atl1-1-01-002-5-0 -t 0-07:00:00 -c 14 -n 1 --mem 60G --pty bash -i`
 ```
     -G 1: number of GPUs to allocate
     -w hugenode4: particular node where the job will run # Q? does it always need to be hugenode4??
@@ -112,8 +112,8 @@ Restart the terminal
 
 ## Data download to remote server
 inside your scratch folder:
-- `mkdir -p e-daic`
+- `mkdirs -p data/e-daic/original`
 - `wget -r -np -nH --cut-dirs=1 -P ./data/e-daic/original http://example.com/path/to/files/`
 
 ## To untar the e-daic dataset
-run `python ./scripts/untar_data.py --root-dir scratch/vlm-debiasing/data/e-daic/original --dest-dir scratch/vlm-debiasing/data/e-daic/untarred` but change destination and root directories
+run `python vlm-debiasing/VLM-Debiasing-Project/scripts/untar_data.py --root-dir data/e-daic/original --dest-dir data/e-daic/untarred` but change destination and root directories

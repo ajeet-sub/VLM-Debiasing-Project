@@ -1,5 +1,6 @@
 import os
 from tqdm import tqdm
+import argparse
 
 # To use the script
 # python ./scripts/untar_data.py --root-dir ./home/hice1/mbibars3/scratch/vlm-debiasing/e-daic_orig_data --dest-dir /home/hice1/mbibars3/scratch/vlm-debiasing/e-daic_untar_data
