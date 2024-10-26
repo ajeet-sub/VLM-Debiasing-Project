@@ -114,6 +114,7 @@ Restart the terminal
 inside your scratch folder:
 - `mkdirs -p data/e-daic/original`
 - `wget -r -np -nH --cut-dirs=1 -P ./data/e-daic/original http://example.com/path/to/files/`
+  
 Download a specific number of the files (change file paths and file name accordingly)
 - `wget -r -np -nH --cut-dirs=1 -A "6*_P.tar.gz" -P ./data/e-daic/original https://dcapswoz.ict.usc.edu/wwwedaic/`
 
