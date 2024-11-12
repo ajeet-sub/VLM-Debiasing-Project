@@ -59,6 +59,8 @@ class MultiModalPerceiver(nn.Module):
         The output dimensionality of the model, which is typically set to 1 for regression tasks. Adjust this 
         for other types of tasks that may require multiple outputs.
 
+    input_axis = 2              # Number of axis for input data (2 for images, 3 for video)
+
     Attributes:
     -----------
     projections : nn.ModuleList
@@ -144,14 +146,30 @@ class MultiModalPerceiver(nn.Module):
         projected = []
         for i, modality in enumerate(x):
             # Apply the linear projection + BatchNorm
+
+            # Ensure the input to Linear matches [batch_size, input_dim]
+            assert modality.shape[1] == self.input_dims[i], (
+                f"Expected modality {i} to have shape [{modality.shape[0]}, {self.input_dims[i]}], "
+                f"but got {modality.shape}"
+            )
+
             proj = self.projections[i](modality)
             # Add modality embedding
             proj = proj + self.modality_embeddings[i]
             projected.append(proj)
-
+            # shape: [n_modalities, batch_size, projection_dim]
+        
+        #print(len(projected))
+        #print([projected[i].shape for i,_ in enumerate(x)])
+        
         # Concatenate all modality projections along the last dimension
-        concatenated = torch.cat(projected, dim=-1)
+        concatenated = torch.cat(projected, dim=-1)  # Shape: [batch_size, projection_dim * num_modalities]
+        #print(concatenated.shape)
+        
+        # Reshape to match Perceiver's expected input of [batch_size, sequence_length, num_channels]
+        concatenated = concatenated.unsqueeze(-1)  # Adds an axis to match [batch_size, sequence_length, num_channels]
+        #print(concatenated.shape)
 
-        # Pass through Perceiver model
+        # Pass concatenated input through Perceiver model
         output = self.perceiver(concatenated)
         return output
