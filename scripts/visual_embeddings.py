@@ -27,7 +27,7 @@ def list_visual_files_paths(main_dir, labels_csv, cols):
         for file in os.listdir(patient_path):
             file_path = os.path.join(patient_path, file)
             #print(file_path)
-            if os.path.isfile(file_path) and file_path.endswith("BoVW_openFace_2.1.0_Pose_Gaze_AUs.csv"):
+            if os.path.isfile(file_path) and file_path.endswith("densenet201.csv"):
             #if os.path.isfile(file_path) and (file_path.endswith(".mat") or file_path.endswith(".csv")):
                 data['file_path'].append(file_path)
                 row = labels_csv[labels_csv["Participant"] == patient_num]

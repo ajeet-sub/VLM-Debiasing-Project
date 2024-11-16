@@ -23,13 +23,13 @@ visual_paths_df = list_visual_files_paths(main_dir, labels_df, cols)
 # Save visual file paths and metadata to CSV for reference
 save_dir = '/home/hice1/awagh31/scratch/scripts'
 os.makedirs(save_dir, exist_ok=True)
-csv_path = os.path.join(save_dir, "labels_visual_files.csv")
+csv_path = os.path.join(save_dir, "labels_visual_files_dn.csv")
 #path_to_save = "/home/hice1/awagh31/scratch/final_embeddings/labels_visual_files.csv"
-file_name = "labels_visual_files.csv"
+file_name = "labels_visual_files_dn.csv"
 visual_paths_df.to_csv(os.path.join(csv_path), index=False)
 
 # Process and save visual embeddings
-target_path = "/home/hice1/awagh31/scratch/final_embeddings"
+target_path = "/home/hice1/awagh31/scratch/final_embeddings_dn"
 visual_file_paths = visual_paths_df["file_path"]
 
 # Extract and save embeddings, with optional chunking
