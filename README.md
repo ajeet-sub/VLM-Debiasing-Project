@@ -122,3 +122,8 @@ Download a specific number of the files (change file paths and file name accordi
 
 ## To untar the e-daic dataset
 run `python vlm-debiasing/VLM-Debiasing-Project/scripts/untar_data.py --root-dir data/e-daic/original --dest-dir data/e-daic/untarred` but change destination and root directories
+
+## To install fairlearn library
+- conda install -c conda-forge fairlearn
+  or
+- pip install fairlearn
