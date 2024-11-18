@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 
 class MultiModalityDataset(Dataset):
-    def __init__(self, df):
+    def __init__(self, df, modalities):
         self.df = df
+        self.modalities = modalities
 
     def __len__(self):
         return len(self.df)
@@ -13,22 +14,26 @@ class MultiModalityDataset(Dataset):
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
         # Load each modality as a numpy array and convert it to a torch tensor
-        modality1 = torch.from_numpy(np.load(row['modality1_path'])).float()
-        modality2 = torch.from_numpy(np.load(row['modality2_path'])).float()
-        modality3 = torch.from_numpy(np.load(row['modality3_path'])).float()
+        np_rows = []
+        for modality in self.modalities:
+            _modality = torch.from_numpy(np.load(row[modality])).float()
+            np_rows.append(_modality)
         label = torch.tensor(row['label']).float()
-        
-        return [modality1, modality2, modality3], label
+        return np_rows, label
 
 def collate_fn(batch):
     # Extract lists of modalities and labels from the batch
-    modalities, labels = zip(*batch)
-    
+    batch_data, labels = zip(*batch)
+    num_modalities = len(batch_data[0])
+    #print(modalities[0])
+    data = []
+
     # Stack each modality across batch dimension
-    modality1 = torch.stack([m[0] for m in modalities], dim=0)
-    modality2 = torch.stack([m[1] for m in modalities], dim=0)
-    modality3 = torch.stack([m[2] for m in modalities], dim=0)
+    for i in range(num_modalities):
+        _modality = torch.stack([sample[i] for sample in batch_data], dim=0)
+        data.append(_modality)
+
     labels = torch.stack(labels)
     
-    # Return in the desired format: [modality1, modality2, modality3], labels
-    return [modality1, modality2, modality3], labels
+    # Return in the desired format: data = [modality1, modality2, modality3], labels
+    return data, labels
