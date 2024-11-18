@@ -75,11 +75,13 @@ def extract_and_save_visual_embeddings(file_paths, target_path, chunked=False):
                 df = pd.read_csv(file_path)
                 features = df.to_numpy().flatten() # Convert CSV data to NumPy array for consistency
             
+            features = features[np.vectorize(lambda x: isinstance(x, (int, float, np.number)))(features)]
             features = resize_to_fixed_length(features)
             # Reshape to (700, 1) for saving
             #print(f"Resized features shape: {features.shape}")
             #print(f"Resized features size: {features.size}")
             features = features.reshape(700, 1)
+            features = np.array([np.array(sub[1:]) for sub in features])
             #print(f"Resized features shape: {features.shape}")
             if chunked:
                 # Split features into chunks
