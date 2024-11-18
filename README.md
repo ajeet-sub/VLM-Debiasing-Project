@@ -127,3 +127,9 @@ run `python vlm-debiasing/VLM-Debiasing-Project/scripts/untar_data.py --root-dir
 ## To extract visual embeddings
 run `python VLM-Debiasing-Project/scripts/visextraction.py` but change the paths
 
+## To load visual embeddings
+`embedding = np.load(npy_path, allow_pickle=True)`
+`embeddings_modified = [[sub[1:] for sub in embedding] for embedding in embeddings]`
+
+
+
