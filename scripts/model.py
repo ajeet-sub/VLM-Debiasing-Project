@@ -152,8 +152,8 @@ class MultiModalPerceiver(nn.Module):
                 f"Expected modality {i} to have shape [{modality.shape[0]}, {self.input_dims[i]}], "
                 f"but got {modality.shape}"
             )
-
-            proj = self.projections[i](modality)
+            #print(modality.shape)
+            proj = self.projections[i](modality.squeeze())
             # Add modality embedding
             proj = proj + self.modality_embeddings[i]
             projected.append(proj)

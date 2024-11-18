@@ -28,7 +28,7 @@ def save_npy(path_to_save, npy_file):
     # Save the features as a .npy file
     np.save(path_to_save, npy_file)
 
-def extract_features_AST(audio_paths, target_path, processor, model):
+def extract_features_AST(audio_paths, target_path, processor, model, pooling = False):
     """
     target_path : str
         The base directory where the processed audio files (with extracted features) will be saved.
@@ -62,7 +62,11 @@ def extract_features_AST(audio_paths, target_path, processor, model):
         # Get the CSV file name
         file_name = os.path.splitext(os.path.basename(wav_file_path))[0]
         path_to_save = os.path.join(target_path, last_directory)
-        _saving_name = file_name+f"_ast9"+".npy"
+        if pooling:
+            layer_9_features = layer_9_features.mean(0)[:,np.newaxis]  # Reduces to shape (1, 768)
+            _saving_name = file_name+".npy"
+        else:
+            _saving_name = file_name+".npy"
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
         path_to_save = os.path.join(path_to_save,_saving_name)
