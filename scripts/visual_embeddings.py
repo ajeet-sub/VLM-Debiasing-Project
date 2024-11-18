@@ -81,7 +81,7 @@ def extract_and_save_visual_embeddings(file_paths, target_path, chunked=False):
             #print(f"Resized features shape: {features.shape}")
             #print(f"Resized features size: {features.size}")
             features = features.reshape(700, 1)
-            features = np.array([np.array(sub[1:]) for sub in features])
+            #features = np.array([np.array(sub[1:]) for sub in features])
             #print(f"Resized features shape: {features.shape}")
             if chunked:
                 # Split features into chunks
