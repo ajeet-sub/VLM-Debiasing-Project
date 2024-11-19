@@ -4,9 +4,10 @@ import numpy as np
 import pandas as pd
 
 class MultiModalityDataset(Dataset):
-    def __init__(self, df, modalities):
+    def __init__(self, df, modalities, label):
         self.df = df
         self.modalities = modalities
+        self.label = label
 
     def __len__(self):
         return len(self.df)
@@ -16,9 +17,9 @@ class MultiModalityDataset(Dataset):
         # Load each modality as a numpy array and convert it to a torch tensor
         np_rows = []
         for modality in self.modalities:
-            _modality = torch.from_numpy(np.load(row[modality])).float()
+            _modality = torch.from_numpy(np.load(row[modality], allow_pickle=True)).float()
             np_rows.append(_modality)
-        label = torch.tensor(row['label']).float()
+        label = torch.tensor(row[self.label]).float()
         return np_rows, label
 
 def collate_fn(batch):
@@ -30,7 +31,11 @@ def collate_fn(batch):
 
     # Stack each modality across batch dimension
     for i in range(num_modalities):
-        _modality = torch.stack([sample[i] for sample in batch_data], dim=0)
+        #print(f"============modality_{i}================")
+        samples = [sample[i] for sample in batch_data]
+
+        #print(np.unique([sample[i] for sample in batch_data]))
+        _modality = torch.stack(samples, dim=0)
         data.append(_modality)
 
     labels = torch.stack(labels)
