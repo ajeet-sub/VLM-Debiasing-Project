@@ -172,4 +172,5 @@ class MultiModalPerceiver(nn.Module):
 
         # Pass concatenated input through Perceiver model
         output = self.perceiver(concatenated)
+        #print(output)
         return output
