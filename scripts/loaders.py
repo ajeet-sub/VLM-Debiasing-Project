@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 class MultiModalityDataset(Dataset):
-    def __init__(self, df, modalities, label, normalize=True):
+    def __init__(self, df, modalities, label, normalize=False):
         self.df = df
         self.modalities = modalities
         self.label = label

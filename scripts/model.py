@@ -174,3 +174,46 @@ class MultiModalPerceiver(nn.Module):
         output = self.perceiver(concatenated)
         #print(output)
         return output
+
+class SimpleMultiModalityModel(nn.Module):
+    def __init__(self, input_sizes, hidden_size, output_size):
+        """
+        Args:
+            input_sizes (list[int]): List of input sizes for each modality.
+            hidden_size (int): Size of the hidden layer for each modality.
+            output_size (int): Size of the output layer (e.g., 1 for binary classification).
+        """
+        super(SimpleMultiModalityModel, self).__init__()
+        
+        # Create separate fully connected layers for each modality
+        self.modality_fc = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(input_size, hidden_size),
+                nn.ReLU()
+            ) for input_size in input_sizes
+        ])
+        
+        # Combine features from all modalities
+        self.combined_fc = nn.Sequential(
+            nn.Linear(hidden_size * len(input_sizes), hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, output_size)
+        )
+
+    def forward(self, modalities):
+        """
+        Args:
+            modalities (list[Tensor]): List of tensors, one for each modality.
+        
+        Returns:
+            Tensor: Output predictions.
+        """
+        # Process each modality independently
+        modality_embeddings = [fc(modality.squeeze(-1)) for fc, modality in zip(self.modality_fc, modalities)]
+        
+        # Concatenate modality embeddings
+        combined = torch.cat(modality_embeddings, dim=1)
+        
+        # Pass through final layers
+        output = self.combined_fc(combined)
+        return output
