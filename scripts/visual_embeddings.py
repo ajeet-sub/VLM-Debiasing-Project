@@ -52,40 +52,50 @@ def list_visual_files_paths(main_dir, labels_csv, cols):
             
     return pd.DataFrame(data)
 
-def extract_and_save_visual_embeddings(file_paths, target_path, chunked=False):
+def extract_and_save_visual_embeddings(
+    file_paths, target_path, labels_csv_path, chunked=False
+):
     """
-    Extracts visual embeddings from .mat/.csv files, optionally splits them into chunks, and saves as .npy files.
+    Extracts visual embeddings from .mat/.csv files, saves as .npy files, 
+    and updates the given CSV file with the paths to the saved .npy files under the 'video' column.
+
+    Parameters:
+        file_paths (list): List of paths to the input .mat/.csv files.
+        target_path (str): Directory to save the .npy files.
+        labels_csv_path (str): Path to the existing CSV file to update.
+        chunked (bool): Whether to split features into chunks when saving.
     """
+    # Load the existing CSV file
+    labels_csv = pd.read_csv(labels_csv_path)
+
+    # Ensure "video" column exists in the DataFrame
+    if "video" not in labels_csv.columns:
+        labels_csv["video"] = None
+
     for file_path in tqdm(file_paths, desc="Extracting visual embeddings"):
         file_name = os.path.splitext(os.path.basename(file_path))[0]
-        #print(file_name[0])
-        patient_number = re.match(r"^\d+", file_name).group()
-        #print('patient no', patient_number)
+        patient_number = re.match(r"^\d+", file_name).group()  # Extract patient number
         last_directory = os.path.basename(os.path.dirname(file_path))
-        #print("last_dir",last_directory)
         path_to_save = os.path.join(target_path, last_directory)
-        #print("path to save:", path_to_save)
         os.makedirs(path_to_save, exist_ok=True)
+
         try:
+            # Load the data
             if file_path.endswith(".mat"):
                 data = scipy.io.loadmat(file_path)
                 features = data["feature"].flatten()
-                
             elif file_path.endswith(".csv"):
                 df = pd.read_csv(file_path)
-                features = df.to_numpy().flatten() # Convert CSV data to NumPy array for consistency
-            
+                features = df.to_numpy().flatten()  # Convert CSV data to NumPy array
+
+            # Filter and resize features
             features = features[np.vectorize(lambda x: isinstance(x, (int, float, np.number)))(features)]
             features = resize_to_fixed_length(features)
-            # Reshape to (700, 1) for saving
-            #print(f"Resized features shape: {features.shape}")
-            #print(f"Resized features size: {features.size}")
             features = features.reshape(700, 1)
-            #features = np.array([np.array(sub[1:]) for sub in features])
-            #print(f"Resized features shape: {features.shape}")
+
             if chunked:
                 # Split features into chunks
-                chunk_size = 100  # Adjust
+                chunk_size = 100  # Adjust chunk size as needed
                 for i in range(0, features.shape[0], chunk_size):
                     chunk = features[i:i + chunk_size]
                     if chunk.size == 0:
@@ -94,8 +104,18 @@ def extract_and_save_visual_embeddings(file_paths, target_path, chunked=False):
                     np.save(os.path.join(path_to_save, chunk_file_name), chunk)
             else:
                 # Save the entire feature array without chunking
-                np.save(os.path.join(path_to_save, f"{patient_number}_vis.npy"), features)
-                print(f"saved {path_to_save}, {patient_number}_vis.npy")
+                npy_file_name = f"{patient_number}_vis.npy"
+                npy_file_path = os.path.join(path_to_save, npy_file_name)
+                np.save(npy_file_path, features)
+                print(f"Saved {npy_file_path}")
+
+                # Update the "video" column in the CSV
+                labels_csv.loc[labels_csv["file_path"] == file_path, "video"] = npy_file_path
+
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
 
+    # Save the updated CSV back to the same path
+    labels_csv.to_csv(labels_csv_path, index=False)
+    print(f"Updated labels CSV saved to {labels_csv_path}")
+    

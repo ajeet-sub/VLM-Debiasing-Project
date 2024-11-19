@@ -41,10 +41,10 @@ class MultiModalityDataset(Dataset):
         # Load each modality as a numpy array and convert it to a torch tensor
         np_rows = []
         for modality in self.modalities:
-            data = np.load(row[modality], allow_pickle=True)
-            if self.normalize:
-                data = self._normalize(data, modality)
-            _modality = torch.from_numpy(data).float()
+            try:
+                _modality = torch.from_numpy(np.load(row[modality], allow_pickle=True)).float()
+            except Exception as e:
+                _modality = torch.as_tensor(np.array(np.load(row[modality], allow_pickle=True)).astype('float'))
             np_rows.append(_modality)
         label = torch.tensor(row[self.label]).float()
         return np_rows, label
