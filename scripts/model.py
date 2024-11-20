@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from perceiver_pytorch import Perceiver
+from transformers import PerceiverModel
 
 class MultiModalPerceiver(nn.Module):
     """
@@ -112,10 +113,11 @@ class MultiModalPerceiver(nn.Module):
         ])
 
         # Learnable modality embeddings to differentiate between modalities
+        """
         self.modality_embeddings = nn.ParameterList([
             nn.Parameter(torch.randn(1, self.projection_dim)) for _ in input_dims
         ])
-
+        """
         input_dim=self.projection_dim * len(input_dims)  # Concatenated input dimension
 
         # Perceiver model
@@ -155,7 +157,7 @@ class MultiModalPerceiver(nn.Module):
             #print(modality.shape)
             proj = self.projections[i](modality.squeeze())
             # Add modality embedding
-            proj = proj + self.modality_embeddings[i]
+            #proj = proj + self.modality_embeddings[i]
             projected.append(proj)
             # shape: [n_modalities, batch_size, projection_dim]
         
@@ -216,4 +218,88 @@ class SimpleMultiModalityModel(nn.Module):
         
         # Pass through final layers
         output = self.combined_fc(combined)
+        return output
+
+import torch
+import torch.nn as nn
+from transformers import PerceiverModel
+
+class MultiModalPretrainedPerceiver(nn.Module):
+    def __init__(self, input_dims, projection_dim=256, num_latents=16, latent_dim=128, output_dim=1, pretrained_model_name="deepmind/multimodal-perceiver"):
+        """
+        Modified MultiModalPerceiver to integrate pre-trained Perceiver model from Hugging Face Transformers.
+        Parameters:
+        ----------
+        input_dims : list of int
+            List of input dimensions for each modality.
+        projection_dim : int
+            The dimensionality of the projection for each modality.
+        num_latents : int
+            Number of latent vectors used in the Perceiver.
+        latent_dim : int
+            Dimensionality of the latent vectors.
+        output_dim : int
+            Output dimension (for regression or classification).
+        pretrained_model_name : str
+            The name of the pre-trained Perceiver model from Hugging Face.
+        """
+        super(MultiModalPretrainedPerceiver, self).__init__()
+
+        self.input_dims = input_dims
+        self.projection_dim = projection_dim
+
+        # Define modality-specific learnable projections
+        self.projections = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(dim, self.projection_dim),
+                nn.BatchNorm1d(self.projection_dim),
+                nn.ReLU()
+            ) for dim in input_dims
+        ])
+
+        # Load the pre-trained Perceiver model
+        self.perceiver = PerceiverModel.from_pretrained(pretrained_model_name)
+        
+        # Modify the final output layer if needed (for regression or classification)
+        self.output_layer = nn.Linear(512, output_dim)
+
+    def forward(self, x):
+        """
+        Forward pass for multi-modal input, using the pre-trained Perceiver.
+        """
+        # Project each modality and concatenate them
+        projected = []
+        for i, modality in enumerate(x):
+            #print(modality.squeeze().shape)
+            # Ensure the input to Linear matches [batch_size, input_dim]
+            assert modality.shape[1] == self.input_dims[i], (
+                f"Expected modality {i} to have shape [{modality.shape[0]}, {self.input_dims[i]}], "
+                f"but got {modality.shape}"
+            )
+            # Apply projection for each modality
+            proj = self.projections[i](modality.squeeze())
+            projected.append(proj)
+        #print("projectes")
+
+        # Concatenate the projected modalities
+        concatenated = torch.cat(projected, dim=-1)  # Shape: [batch_size, projection_dim * num_modalities]
+        #print("concates")
+
+        # Reshape for Perceiver: [batch_size, seq_len, hidden_size]
+        concatenated = concatenated.unsqueeze(-1)  # Add an extra dimension for channels
+        #print("unsquees")
+
+        concatenated = concatenated.repeat(1, 1, 704)  # Repeat for channels
+
+        # Pass through the pre-trained Perceiver model
+        outputs = self.perceiver(concatenated)
+
+        # Get the last hidden state
+        last_hidden_state = outputs.last_hidden_state
+
+        # Use the first token or average over all tokens (pooling) for final prediction
+        pooled_output = last_hidden_state.mean(dim=1)  # Mean pooling
+
+        # Final regression or classification output
+        output = self.output_layer(pooled_output)
         return output
