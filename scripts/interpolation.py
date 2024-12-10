@@ -38,7 +38,7 @@ def interpolate_embeddings(time_series_embeddings, desired_length=80):
 
     return interpolated
 
-def normalize_all_embeddings(parent_dir="/home/asubramanian91/scratch/e-daic/data/e-daic/TEXT_Embeddings"):
+def normalize_all_embeddings(parent_dir="/home/hice1/mbibars3/scratch/vlm-debiasing/data/e-daic/text_2d_interp"):
     """
     Iterates through all .npy embedding files in the given directory, interpolates them to (768, 80), 
     and saves them back to the directory.
