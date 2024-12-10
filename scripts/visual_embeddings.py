@@ -83,15 +83,15 @@ def extract_and_save_visual_embeddings(
             # Load the data
             if file_path.endswith(".mat"):
                 data = scipy.io.loadmat(file_path)
-                features = data["feature"].flatten()
+                features = data["feature"]
             elif file_path.endswith(".csv"):
                 df = pd.read_csv(file_path)
-                features = df.to_numpy().flatten()  # Convert CSV data to NumPy array
+                features = df.to_numpy()  # Convert CSV data to NumPy array
 
             # Filter and resize features
             features = features[np.vectorize(lambda x: isinstance(x, (int, float, np.number)))(features)]
-            features = resize_to_fixed_length(features)
-            features = features.reshape(700, 1)
+            #features = resize_to_fixed_length(features)
+            #features = features.reshape(700, 1)
 
             if chunked:
                 # Split features into chunks
