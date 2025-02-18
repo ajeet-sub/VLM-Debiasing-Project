@@ -1,4 +1,6 @@
 # VLM-Debiasing-Project
+<a href="https://www.dropbox.com/scl/fi/h728otkdews2m4odmspso/CS_8803_VLM_Project_Report.pdf?rlkey=dzjzla3z41bfdxpl7hypoorai&st=g4hlt9ua&dl=0
+## Instructions" target="_blank">Link to the Project Report</a>
 ## Instructions
 ### Accessing PACE and running compute node:
 from terminal or using remote ssh extension on vscode:
